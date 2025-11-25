@@ -17,6 +17,10 @@ persim>=0.3.0
 plotly>=5.14.0
 pyvis>=0.3.2
 
+# Machine learning (optional but recommended)
+xgboost>=2.0.0
+shap>=0.42.0
+
 # Additional utilities
 tqdm>=4.65.0
 
