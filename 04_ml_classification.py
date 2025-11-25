@@ -30,14 +30,14 @@ except ImportError:
     XGBOOST_AVAILABLE = False
     print("⚠️  XGBoost not available - install with: pip install xgboost")
 
-# Try to import SHAP
-try:
-    import shap
-    SHAP_AVAILABLE = True
-    print("✓ SHAP available")
-except ImportError:
-    SHAP_AVAILABLE = False
-    print("⚠️  SHAP not available - install with: pip install shap")
+# # Try to import SHAP
+# try:
+#     import shap
+#     SHAP_AVAILABLE = True
+#     print("✓ SHAP available")
+# except ImportError:
+#     SHAP_AVAILABLE = False
+#     print("⚠️  SHAP not available - install with: pip install shap")
 
 
 class ADGeneClassifier:
@@ -66,7 +66,9 @@ class ADGeneClassifier:
         X_cols = [col for col in self.features_df.columns 
                   if col not in ['node_id', 'is_ad']]
         
-        self.X = self.features_df[X_cols].values
+        # Convert to numeric, coercing errors to NaN
+        X_df = self.features_df[X_cols].apply(pd.to_numeric, errors='coerce')
+        self.X = X_df.values.astype(np.float64)
         self.y = self.features_df['is_ad'].values
         self.feature_names = X_cols
         
