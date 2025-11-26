@@ -64,7 +64,7 @@ def analyze_full_human_interactome(ad_genes, tau_genes, amyloid_genes):
     print("="*80)
     
     # Check if file exists
-    human_file = 'data/BIOGRID-HUMAN-5.0.251.tab3.txt'
+    human_file = 'computed_data/BIOGRID-HUMAN-5.0.251.tab3.txt'
     if not os.path.exists(human_file):
         print(f"⚠️  Full human interactome not found at {human_file}")
         print("   Please download from BioGRID and place in data/ folder")
@@ -305,7 +305,7 @@ def compare_project_vs_full(ad_genes):
     lcc_proj = G_proj.subgraph(lcc_proj).copy()
     
     # Check if full interactome exists
-    human_file = 'data/BIOGRID-HUMAN-5.0.251.tab3.txt'
+    human_file = 'computed_data/BIOGRID-HUMAN-5.0.251.tab3.txt'
     if not os.path.exists(human_file):
         print("Full interactome not loaded - skipping comparison")
         return
