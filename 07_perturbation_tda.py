@@ -32,7 +32,7 @@ import os
 # DATA LOADING
 # ============================================================================
 
-def load_human_interactome(filepath='computed_data/BIOGRID-HUMAN-5.0.251.tab3.txt'):
+def load_human_interactome(filepath='data/BIOGRID-HUMAN-5.0.251.tab3.txt'):
     """Load the full human protein interaction network."""
     print("Loading human interactome...")
     df = pd.read_csv(filepath, sep='\t', low_memory=False)
