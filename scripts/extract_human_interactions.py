@@ -2,164 +2,154 @@
 """
 Extract Human Interactions from BioGRID
 
-This script extracts human protein-protein interactions from the full
-BioGRID organism file and saves them to a separate file.
+This script extracts human-only protein interactions from the full BioGRID
+database and saves them to a separate file.
 
 Usage:
     python scripts/extract_human_interactions.py
+    python scripts/extract_human_interactions.py --input data/BIOGRID-ALL-5.0.251.tab3.txt
 
-The script will:
-1. Look for BIOGRID-ORGANISM-*.tab3.txt in data/
-2. Extract only Homo sapiens interactions
-3. Save to data/BIOGRID-HUMAN-*.tab3.txt
-
-Download the source file from:
-https://downloads.thebiogrid.org/BioGRID/Release-Archive/
+The script processes the file in chunks to handle the large file size (~20GB).
 """
 
-import os
-import glob
 import pandas as pd
+import argparse
+import os
 import sys
+from glob import glob
 
 
-def find_biogrid_file():
-    """Find the BioGRID organism file in the data directory."""
-    # Look for the full organism file
+def find_biogrid_all_file(data_dir='data'):
+    """Find the BIOGRID-ALL file in the data directory."""
     patterns = [
-        'data/BIOGRID-ORGANISM-*.tab3.txt',
-        'data/BIOGRID-ALL-*.tab3.txt',
+        os.path.join(data_dir, 'BIOGRID-ALL-*.tab3.txt'),
+        os.path.join(data_dir, 'BIOGRID-ALL-*.tab3'),
     ]
     
     for pattern in patterns:
-        files = glob.glob(pattern)
-        if files:
-            return files[0]
+        matches = glob(pattern)
+        if matches:
+            return matches[0]
     
     return None
 
 
-def extract_human_interactions(input_file, output_file=None):
+def extract_human_interactions(input_file, output_file, chunk_size=500000):
     """
-    Extract human interactions from the full BioGRID file.
+    Extract human-only interactions from BioGRID.
     
     Parameters:
     -----------
     input_file : str
-        Path to the full BioGRID organism file
-    output_file : str or None
-        Path to save extracted human interactions
-        If None, will auto-generate based on input filename
-    
-    Returns:
-    --------
-    str : Path to the output file
+        Path to BIOGRID-ALL file
+    output_file : str
+        Path to output human-only file
+    chunk_size : int
+        Number of rows to process at a time
     """
-    print(f"Loading {input_file}...")
-    print("(This may take a minute for large files)")
+    print(f"Input: {input_file}")
+    print(f"Output: {output_file}")
+    print(f"Processing in chunks of {chunk_size:,} rows...")
     
-    # Read the file
-    df = pd.read_csv(input_file, sep='\t', low_memory=False)
+    # Human taxonomy ID
+    HUMAN_TAX_ID = 9606
     
-    print(f"Total interactions loaded: {len(df):,}")
+    # Process in chunks
+    chunks_processed = 0
+    total_rows = 0
+    human_rows = 0
     
-    # Check what organism columns exist
-    org_cols = [col for col in df.columns if 'Organism' in col]
-    print(f"Organism columns: {org_cols}")
+    # First chunk - write with header
+    first_chunk = True
     
-    # Filter for human interactions (Homo sapiens, taxonomy ID 9606)
-    # Both interactors must be human
-    if 'Organism ID Interactor A' in df.columns:
-        human_df = df[
-            (df['Organism ID Interactor A'] == 9606) & 
-            (df['Organism ID Interactor B'] == 9606)
-        ]
-    elif 'Organism Interactor A' in df.columns:
-        human_df = df[
-            (df['Organism Interactor A'] == 'Homo sapiens') & 
-            (df['Organism Interactor B'] == 'Homo sapiens')
-        ]
-    else:
-        print("ERROR: Could not find organism column!")
-        print(f"Available columns: {list(df.columns)}")
-        return None
+    try:
+        for chunk in pd.read_csv(input_file, sep='\t', chunksize=chunk_size, 
+                                  low_memory=False, on_bad_lines='skip'):
+            chunks_processed += 1
+            total_rows += len(chunk)
+            
+            # Filter to human-human interactions
+            # Both interactors must be human
+            human_chunk = chunk[
+                (chunk['Organism ID Interactor A'] == HUMAN_TAX_ID) &
+                (chunk['Organism ID Interactor B'] == HUMAN_TAX_ID)
+            ]
+            
+            human_rows += len(human_chunk)
+            
+            # Write to output
+            if len(human_chunk) > 0:
+                if first_chunk:
+                    human_chunk.to_csv(output_file, sep='\t', index=False, mode='w')
+                    first_chunk = False
+                else:
+                    human_chunk.to_csv(output_file, sep='\t', index=False, mode='a', header=False)
+            
+            # Progress update
+            print(f"  Chunk {chunks_processed}: {total_rows:,} total, {human_rows:,} human", end='\r')
+            
+    except Exception as e:
+        print(f"\nError processing file: {e}")
+        return False
     
-    print(f"Human interactions: {len(human_df):,}")
-    
-    # Generate output filename if not provided
-    if output_file is None:
-        # Extract version from input filename
-        basename = os.path.basename(input_file)
-        if 'BIOGRID-ORGANISM-' in basename:
-            version = basename.replace('BIOGRID-ORGANISM-', '').replace('.tab3.txt', '')
-            # Version might be like "5.0.251" - extract just that
-            parts = version.split('-')
-            if len(parts) > 1:
-                version = parts[-1]  # Take last part which should be version
-        elif 'BIOGRID-ALL-' in basename:
-            version = basename.replace('BIOGRID-ALL-', '').replace('.tab3.txt', '')
-        else:
-            version = 'extracted'
-        
-        output_file = f'data/BIOGRID-HUMAN-{version}.tab3.txt'
-    
-    # Save
-    print(f"Saving to {output_file}...")
-    human_df.to_csv(output_file, sep='\t', index=False)
-    
-    # Print stats
-    file_size = os.path.getsize(output_file) / (1024 * 1024)  # MB
-    print(f"\nDone!")
+    print(f"\n\nDone!")
+    print(f"  Total rows processed: {total_rows:,}")
+    print(f"  Human interactions: {human_rows:,}")
     print(f"  Output file: {output_file}")
-    print(f"  File size: {file_size:.1f} MB")
-    print(f"  Interactions: {len(human_df):,}")
     
-    # Count unique genes
-    if 'Entrez Gene Interactor A' in human_df.columns:
-        genes_a = set(human_df['Entrez Gene Interactor A'].dropna().astype(int))
-        genes_b = set(human_df['Entrez Gene Interactor B'].dropna().astype(int))
-        all_genes = genes_a | genes_b
-        print(f"  Unique genes: {len(all_genes):,}")
+    # Verify output
+    if os.path.exists(output_file):
+        size_mb = os.path.getsize(output_file) / (1024 * 1024)
+        print(f"  Output size: {size_mb:.1f} MB")
     
-    return output_file
+    return True
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Extract human interactions from BioGRID')
+    parser.add_argument('--input', type=str, default=None,
+                        help='Path to BIOGRID-ALL file (auto-detected if not specified)')
+    parser.add_argument('--output', type=str, default='data/BIOGRID-HUMAN-5.0.251.tab3.txt',
+                        help='Path to output file')
+    parser.add_argument('--chunk-size', type=int, default=500000,
+                        help='Chunk size for processing')
+    args = parser.parse_args()
+    
     print("="*60)
     print("EXTRACT HUMAN INTERACTIONS FROM BIOGRID")
     print("="*60)
     
-    # Check if human file already exists
-    existing = glob.glob('data/BIOGRID-HUMAN-*.tab3.txt')
-    if existing:
-        print(f"\nHuman interactions file already exists: {existing[0]}")
-        response = input("Overwrite? (y/N): ").strip().lower()
-        if response != 'y':
-            print("Exiting.")
-            return
-    
     # Find input file
-    input_file = find_biogrid_file()
+    if args.input:
+        input_file = args.input
+    else:
+        input_file = find_biogrid_all_file()
+        if input_file is None:
+            print("\nError: Could not find BIOGRID-ALL file in data/ directory")
+            print("\nPlease either:")
+            print("  1. Download from https://downloads.thebiogrid.org/BioGRID/")
+            print("  2. Place BIOGRID-ALL-*.tab3.txt in the data/ folder")
+            print("  3. Specify the path with --input")
+            sys.exit(1)
     
-    if input_file is None:
-        print("\nERROR: No BioGRID file found!")
-        print("\nPlease download the BioGRID organism file:")
-        print("1. Go to: https://downloads.thebiogrid.org/BioGRID/Release-Archive/")
-        print("2. Download: BIOGRID-ORGANISM-<version>.tab3.zip")
-        print("3. Unzip and place in data/ folder")
-        print("\nOr download the ALL file:")
-        print("   BIOGRID-ALL-<version>.tab3.zip")
+    if not os.path.exists(input_file):
+        print(f"\nError: Input file not found: {input_file}")
         sys.exit(1)
     
-    print(f"\nFound: {input_file}")
+    # Run extraction
+    success = extract_human_interactions(
+        input_file, 
+        args.output, 
+        chunk_size=args.chunk_size
+    )
     
-    # Extract human interactions
-    output_file = extract_human_interactions(input_file)
-    
-    if output_file:
+    if success:
         print("\n" + "="*60)
-        print("SUCCESS! You can now run the TDA analysis scripts.")
+        print("SUCCESS! Human interactions extracted.")
         print("="*60)
+    else:
+        print("\nExtraction failed.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
