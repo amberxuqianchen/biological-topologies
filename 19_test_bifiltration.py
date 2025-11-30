@@ -86,28 +86,28 @@ PERTURB_TDA = [
 
 # Bifiltration features (from 17_)
 BIFILT_DELTA = [
-    'delta_H1_ptm10', 'delta_H2_ptm10',
-    'delta_H1_ptm25', 'delta_H2_ptm25',
-    'delta_H1_ptm50', 'delta_H2_ptm50',
-    'delta_H1_ptm75', 'delta_H2_ptm75',
-    'delta_H1_ptm90', 'delta_H2_ptm90',
-    'delta_H1_ptm100', 'delta_H2_ptm100',
+    'delta_H1_ptm10', 'delta_H2_ptm10', 'delta_H3_ptm10',
+    'delta_H1_ptm25', 'delta_H2_ptm25', 'delta_H3_ptm25',
+    'delta_H1_ptm50', 'delta_H2_ptm50', 'delta_H3_ptm50',
+    'delta_H1_ptm75', 'delta_H2_ptm75', 'delta_H3_ptm75',
+    'delta_H1_ptm90', 'delta_H2_ptm90', 'delta_H3_ptm90',
+    'delta_H1_ptm100', 'delta_H2_ptm100', 'delta_H3_ptm100',
 ]
 
 BIFILT_BETTI = [
-    'H1_ptm10', 'H2_ptm10',
-    'H1_ptm25', 'H2_ptm25',
-    'H1_ptm50', 'H2_ptm50',
-    'H1_ptm75', 'H2_ptm75',
-    'H1_ptm90', 'H2_ptm90',
-    'H1_ptm100', 'H2_ptm100',
+    'H1_ptm10', 'H2_ptm10', 'H3_ptm10',
+    'H1_ptm25', 'H2_ptm25', 'H3_ptm25',
+    'H1_ptm50', 'H2_ptm50', 'H3_ptm50',
+    'H1_ptm75', 'H2_ptm75', 'H3_ptm75',
+    'H1_ptm90', 'H2_ptm90', 'H3_ptm90',
+    'H1_ptm100', 'H2_ptm100', 'H3_ptm100',
 ]
 
 BIFILT_DERIVED = [
-    'H1_ptm_slope', 'H2_ptm_slope',
-    'H1_ptm_range', 'H2_ptm_range',
-    'delta_H1_ptm_slope', 'delta_H2_ptm_slope',
-    'delta_H1_ptm_range', 'delta_H2_ptm_range',
+    'H1_ptm_slope', 'H2_ptm_slope', 'H3_ptm_slope',
+    'H1_ptm_range', 'H2_ptm_range', 'H3_ptm_range',
+    'delta_H1_ptm_slope', 'delta_H2_ptm_slope', 'delta_H3_ptm_slope',
+    'delta_H1_ptm_range', 'delta_H2_ptm_range', 'delta_H3_ptm_range',
 ]
 
 BIFILT_ALL = BIFILT_DELTA + BIFILT_BETTI + BIFILT_DERIVED

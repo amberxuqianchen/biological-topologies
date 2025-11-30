@@ -58,20 +58,21 @@ def load_ad_categories():
 GRAPH_FEATURES = ['degree', 'ego_original_size', 'ego_actual_size']
 
 BIFILT_DELTA = [
-    'delta_H1_ptm10', 'delta_H2_ptm10',
-    'delta_H1_ptm25', 'delta_H2_ptm25',
-    'delta_H1_ptm50', 'delta_H2_ptm50',
-    'delta_H1_ptm75', 'delta_H2_ptm75',
-    'delta_H1_ptm90', 'delta_H2_ptm90',
-    'delta_H1_ptm100', 'delta_H2_ptm100',
+    'delta_H1_ptm10', 'delta_H2_ptm10', 'delta_H3_ptm10',
+    'delta_H1_ptm25', 'delta_H2_ptm25', 'delta_H3_ptm25',
+    'delta_H1_ptm50', 'delta_H2_ptm50', 'delta_H3_ptm50',
+    'delta_H1_ptm75', 'delta_H2_ptm75', 'delta_H3_ptm75',
+    'delta_H1_ptm90', 'delta_H2_ptm90', 'delta_H3_ptm90',
+    'delta_H1_ptm100', 'delta_H2_ptm100', 'delta_H3_ptm100',
 ]
 
-BIFILT_BETTI = [f'H{d}_ptm{p}' for d in [1,2] for p in [10,25,50,75,90,100]]
+BIFILT_BETTI = [f'H{d}_ptm{p}' for d in [1,2,3] for p in [10,25,50,75,90,100]]
 
 BIFILT_DERIVED = [
-    'H1_ptm_slope', 'H2_ptm_slope', 'H1_ptm_range', 'H2_ptm_range',
-    'delta_H1_ptm_slope', 'delta_H2_ptm_slope', 
-    'delta_H1_ptm_range', 'delta_H2_ptm_range',
+    'H1_ptm_slope', 'H2_ptm_slope', 'H3_ptm_slope',
+    'H1_ptm_range', 'H2_ptm_range', 'H3_ptm_range',
+    'delta_H1_ptm_slope', 'delta_H2_ptm_slope', 'delta_H3_ptm_slope',
+    'delta_H1_ptm_range', 'delta_H2_ptm_range', 'delta_H3_ptm_range',
 ]
 
 BIFILT_ALL = BIFILT_DELTA + BIFILT_BETTI + BIFILT_DERIVED

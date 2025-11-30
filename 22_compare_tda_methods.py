@@ -56,17 +56,17 @@ GRAPH = ['degree', 'ego_original_size', 'ego_actual_size']
 PERTURB_TDA = ['delta_H0', 'delta_H1', 'delta_H2', 'delta_H3']
 
 BIFILT_DELTA = [
-    'delta_H1_ptm10', 'delta_H2_ptm10',
-    'delta_H1_ptm25', 'delta_H2_ptm25', 
-    'delta_H1_ptm50', 'delta_H2_ptm50',
-    'delta_H1_ptm75', 'delta_H2_ptm75',
-    'delta_H1_ptm90', 'delta_H2_ptm90',
-    'delta_H1_ptm100', 'delta_H2_ptm100',
+    'delta_H1_ptm10', 'delta_H2_ptm10', 'delta_H3_ptm10',
+    'delta_H1_ptm25', 'delta_H2_ptm25', 'delta_H3_ptm25',
+    'delta_H1_ptm50', 'delta_H2_ptm50', 'delta_H3_ptm50',
+    'delta_H1_ptm75', 'delta_H2_ptm75', 'delta_H3_ptm75',
+    'delta_H1_ptm90', 'delta_H2_ptm90', 'delta_H3_ptm90',
+    'delta_H1_ptm100', 'delta_H2_ptm100', 'delta_H3_ptm100',
 ]
 
 BIFILT_DERIVED = [
-    'delta_H1_ptm_slope', 'delta_H2_ptm_slope',
-    'delta_H1_ptm_range', 'delta_H2_ptm_range',
+    'delta_H1_ptm_slope', 'delta_H2_ptm_slope', 'delta_H3_ptm_slope',
+    'delta_H1_ptm_range', 'delta_H2_ptm_range', 'delta_H3_ptm_range',
 ]
 
 BIFILT_ALL = BIFILT_DELTA + BIFILT_DERIVED
