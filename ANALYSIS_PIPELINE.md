@@ -241,11 +241,90 @@ AD genes play a more critical topological role in their local network:
 
 ---
 
+---
+
+## Phase 2: Bifiltration with PTM Data
+
+After establishing that perturbation TDA helps, we implemented **PTM-bifiltration** - a two-parameter approach that filters by both network distance AND post-translational modification levels.
+
+### What is Bifiltration?
+
+Instead of just computing Betti numbers once, we compute them at multiple PTM thresholds:
+- **ptm10**: Only include neighbors in bottom 10th percentile of PTM counts
+- **ptm25, ptm50, ptm75, ptm90**: Progressively include more PTM-rich genes
+- **ptm100**: Include all neighbors (equivalent to standard perturbation)
+
+This captures *how topology changes* as you filter by PTM level.
+
+### New Scripts (17-23)
+
+```bash
+python 17_bifiltration_tda.py       # Core bifiltration module
+python 18_overnight_bifiltration.py # Batch computation
+python 19_test_bifiltration.py      # Initial testing
+python 20_check_ptm_bias.py         # Check for PTM-related bias
+python 21_bifiltration_analysis.py  # Comprehensive analysis
+python 22_compare_tda_methods.py    # Compare perturbation vs bifiltration
+python 23_visualize_comparison.py   # Create figures
+```
+
+### Key Result: Bifiltration is Significantly Better
+
+| Method | AUROC | Improvement over Graph |
+|--------|-------|------------------------|
+| Graph only | 0.514 | baseline |
+| Graph + Perturbation TDA | 0.602 | +8.8% |
+| **Graph + Bifiltration TDA** | **0.686** | **+17.2%** |
+
+**Bifiltration is +8.4% better than perturbation** (p = 2.31e-38)
+
+### Top Bifiltration Features
+
+| Feature | Importance | Meaning |
+|---------|------------|---------|
+| delta_H1_ptm_slope | 0.070 | How H1 perturbation changes with PTM level |
+| delta_H2_ptm_slope | 0.065 | How H2 perturbation changes with PTM level |
+| delta_H1_ptm_range | 0.059 | Difference between H1 at low vs high PTM |
+
+### PTM Bias Check (Script 20)
+
+⚠️ **PTM meta-features are biased** (center_ptm has ∞ ratio between AD and background)
+- AD genes have more PTM records because they're well-studied
+- **Solution:** Exclude PTM meta-features, use only bifiltration delta features
+
+✅ **Bifiltration TDA features are NOT biased** (correlation with center_ptm < 0.22)
+
+### Biological Interpretation
+
+AD genes show different *responses* to PTM-based filtering:
+- Their topological signatures change more steeply across PTM thresholds
+- They have larger range in perturbation impact between low-PTM and high-PTM subnetworks
+- This suggests AD genes occupy structurally distinctive positions in PTM-stratified networks
+
+---
+
+## Summary: Updated Main Result
+
+**PTM-bifiltration improves AD gene classification by 17.2% (p < 10⁻³⁸) over graph features alone.**
+
+This is nearly double the improvement from simple perturbation TDA (+8.8%).
+
+| Approach | AUROC | vs Graph |
+|----------|-------|----------|
+| Graph only | 0.514 | — |
+| + Perturbation TDA | 0.602 | +8.8% |
+| + Bifiltration TDA | 0.686 | +17.2% |
+| + Both | 0.683 | +16.9% |
+
+Note: Combining perturbation + bifiltration doesn't help because bifiltration already captures the perturbation signal plus additional multi-scale information.
+
+---
+
 ## Next Steps
 
-1. **Bifiltration analysis:** Add PTM (post-translational modification) as second filtration parameter
-2. **Other diseases:** Apply same pipeline to Autism, Glioblastoma, etc.
-3. **Candidate gene discovery:** Use model to predict novel AD gene candidates
+1. ✅ ~~Bifiltration analysis~~ — DONE, shows +17.2% improvement
+2. **Cross-disease bifiltration:** Compute bifiltration for all disease projects
+3. **Candidate gene discovery:** Apply trained model to find novel AD candidates
 4. **Validation:** Cross-reference predictions with recent literature
 
 ---
@@ -254,15 +333,29 @@ AD genes play a more critical topological role in their local network:
 
 ```
 computed_data/
-├── tda_perturbation_alzheimers.csv   # AD gene TDA features
-├── tda_perturbation_autism.csv       # Autism gene TDA features
-├── tda_perturbation_autophagy.csv    # Autophagy gene TDA features
-├── tda_perturbation_fanconi.csv      # Fanconi gene TDA features
-├── tda_perturbation_glioblastoma.csv # Glioblastoma gene TDA features
-└── tda_perturbation_top_candidates.csv # Background genes TDA features
+├── tda_perturbation_alzheimers.csv      # AD gene perturbation TDA
+├── tda_perturbation_autism.csv          # Autism gene perturbation TDA
+├── tda_perturbation_autophagy.csv       # Autophagy gene perturbation TDA
+├── tda_perturbation_fanconi.csv         # Fanconi gene perturbation TDA
+├── tda_perturbation_glioblastoma.csv    # Glioblastoma gene perturbation TDA
+├── tda_perturbation_top_candidates.csv  # Background genes perturbation TDA
+├── tda_bifiltration_features.csv        # AD + matched BG bifiltration features
+├── tda_bifiltration_alzheimers.csv      # AD genes bifiltration (if run separately)
+├── tda_bifiltration_autism.csv          # Autism genes bifiltration
+├── tda_bifiltration_autophagy.csv       # Autophagy genes bifiltration
+├── tda_bifiltration_fanconi.csv         # Fanconi genes bifiltration
+├── tda_bifiltration_glioblastoma.csv    # Glioblastoma genes bifiltration
+└── tda_bifiltration_candidates.csv      # Top candidate genes bifiltration
 
 data/
-└── BIOGRID-PROJECT-alzheimers_disease_project-GENES-5.0.250.projectindex.txt
+├── BIOGRID-PROJECT-alzheimers_disease_project-GENES-*.projectindex.txt
+├── BIOGRID-PROJECT-alzheimers_disease_project-PTM-*.ptmtab.txt
+└── ... (other BioGRID project files)
+
+figures/
+├── tda_method_comparison.png       # Bar chart comparing methods
+├── tda_feature_importance.png      # Feature importance plot
+└── bifiltration_analysis.png       # Bifiltration concept diagram
 ```
 
 ---

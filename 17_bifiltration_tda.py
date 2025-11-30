@@ -98,7 +98,7 @@ def extract_ego_graph(G, node, radius=2, max_size=300):
     return ego, original_size, was_subsampled
 
 
-def compute_betti_clique(G, max_dim=2):
+def compute_betti_clique(G, max_dim=3):
     """
     Compute Betti numbers using GUDHI clique complex.
     """
@@ -130,7 +130,7 @@ def compute_bifiltration_features(G, node, ptm_counts,
                                    radius=2,
                                    max_ego_size=300,
                                    percentiles=[10, 25, 50, 75, 90, 100],
-                                   max_dim=2):
+                                   max_dim=3):
     """
     Compute bifiltration TDA features for a single node.
     
@@ -220,11 +220,16 @@ def compute_bifiltration_features(G, node, ptm_counts,
             subgraph_without = ego.subgraph(nodes_without)
             betti_without = compute_betti_clique(subgraph_without, max_dim=max_dim)
             
+            for d in range(max_dim + 1):
+                features[f'H{d}_without_ptm{pct}'] = betti_without[d]
+            
             for d in range(1, max_dim + 1):
                 delta = betti_with[d] - betti_without[d]
                 features[f'delta_H{d}_ptm{pct}'] = delta
                 delta_series[f'delta_H{d}'].append(delta)
         else:
+            for d in range(max_dim + 1):
+                features[f'H{d}_without_ptm{pct}'] = 0
             for d in range(1, max_dim + 1):
                 features[f'delta_H{d}_ptm{pct}'] = 0
                 delta_series[f'delta_H{d}'].append(0)
