@@ -1,0 +1,111 @@
+======================================================================
+OVERNIGHT BATCH TDA COMPUTATION
+======================================================================
+Started: 2025-11-28 23:54:36
+Settings:
+  Max ego graph size: 300
+  Run projects: True
+  Top candidates: None
+
+Loading human interactome (this takes 2-5 minutes)...
+Loading human interactome...
+  Nodes: 20,181
+  Edges: 906,188
+Network loaded: 20,181 nodes, 906,188 edges
+
+======================================================================
+RUNNING ALL BIOGRID DISEASE PROJECTS
+======================================================================
+
+============================================================
+Processing: Alzheimer's Disease
+============================================================
+  Total genes: 466
+  Already computed: 464
+  Remaining: 2
+  Output file: computed_data/tda_perturbation_alzheimers.csv
+  Not in network: 2
+  Genes to process: 0
+
+Starting computation at 2025-11-28 23:55:31
+------------------------------------------------------------
+------------------------------------------------------------
+Completed at 2025-11-28 23:55:31
+  Processed: 0
+  Skipped: 0
+  Errors: 0
+  Total time: 0:00:00
+  Avg time per gene: 0.00s
+
+============================================================
+Processing: Autism Spectrum Disorder
+============================================================
+  Total genes: 134
+  Already computed: 134
+  Remaining: 0
+  Output file: computed_data/tda_perturbation_autism.csv
+  ✓ All genes already computed!
+
+============================================================
+Processing: Autophagy
+============================================================
+  Total genes: 197
+  Already computed: 197
+  Remaining: 0
+  Output file: computed_data/tda_perturbation_autophagy.csv
+  ✓ All genes already computed!
+
+============================================================
+Processing: Fanconi Anemia
+============================================================
+  Total genes: 69
+  Already computed: 69
+  Remaining: 0
+  Output file: computed_data/tda_perturbation_fanconi.csv
+  ✓ All genes already computed!
+
+============================================================
+Processing: Glioblastoma
+============================================================
+  Total genes: 198
+  Already computed: 180
+  Remaining: 18
+  Output file: computed_data/tda_perturbation_glioblastoma.csv
+  Not in network: 7
+  Genes to process: 11
+
+Starting computation at 2025-11-28 23:55:31
+------------------------------------------------------------
+[181/198] Gene 6125 (RPL5) - 285.17s - ETA: 0:47:31
+[182/198] Gene 3566 (IL4R) - 1.36s - ETA: 0:21:29
+[183/198] Gene 1007 (CDH9) - 1.07s - ETA: 0:12:46
+[184/198] Gene 10735 (STAG2) - 4.79s - ETA: 0:08:31
+[185/198] Gene 84467 (FBN3) - 0.72s - ETA: 0:05:51
+[186/198] Gene 7157 (TP53) - 3.22s - ETA: 0:04:06
+[187/198] Gene 1016 (CDH18) - 0.55s - ETA: 0:02:49
+[188/198] Gene 2042 (EPHA3) - 2.34s - ETA: 0:01:52
+[189/198] Gene 9723 (SEMA3E) - 0.31s - ETA: 0:01:06
+[190/198] Gene 1021 (CDK6) - 2.82s - ETA: 0:00:30
+[191/198] Gene 2559 (GABRA6) - 0.19s - ETA: 0:00:00
+------------------------------------------------------------
+Completed at 2025-11-29 00:00:34
+  Processed: 11
+  Skipped: 0
+  Errors: 0
+  Total time: 0:05:02
+  Avg time per gene: 27.50s
+
+======================================================================
+BATCH PROCESSING COMPLETE
+======================================================================
+Finished: 2025-11-29 00:00:34
+Total genes processed: 1,055
+
+Output files:
+  computed_data/tda_perturbation_alzheimers.csv: 464 genes
+  computed_data/tda_perturbation_autism.csv: 134 genes
+  computed_data/tda_perturbation_autophagy.csv: 197 genes
+  computed_data/tda_perturbation_fanconi.csv: 69 genes
+  computed_data/tda_perturbation_glioblastoma.csv: 191 genes
+
+✓ Done!
