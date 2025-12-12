@@ -363,10 +363,9 @@ figures/
 ## Requirements
 
 ```bash
-pip install pandas numpy scikit-learn scipy matplotlib seaborn
+pip install -r requirements.txt
 ```
 
----
+Main dependencies: `pandas`, `numpy`, `networkx`, `scikit-learn`, `gudhi`, `ripser`, `xgboost`
 
-*Last updated: November 2024*
 
